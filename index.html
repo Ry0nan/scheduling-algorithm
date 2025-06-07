@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>SRTF Scheduler</title>
 
-  <!-- css stylesheets -->
+  <!-- css stylesheet -->
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -17,8 +17,9 @@
     <h1>Shortest Remaining Time First (SRTF) Scheduler</h1>
     <p>Enter Arrival Times (0-10):</p>
 
-    <!-- input section -->
+    <!-- input field -->
     <div class="inputs">
+      <label>P0: <input type="number" id="p0" min="0" max="10" value="1" /></label>
       <label>P1: <input type="number" id="p1" min="0" max="10" value="2" /></label>
       <label>P2: <input type="number" id="p2" min="0" max="10" value="3" /></label>
       <label>P3: <input type="number" id="p3" min="0" max="10" value="4" /></label>
@@ -26,10 +27,11 @@
     </div>
     <button onclick="simulate()">Simulate</button>
 
+    <!-- timeline graph -->
     <h2>Execution Timeline:</h2>
     <div class="gantt" id="timeline"></div>
 
-    <!-- result table -->
+    <!-- results -->
     <h2>Results:</h2>
     <table id="resultTable">
       <thead>
@@ -46,9 +48,10 @@
     </table>
 
     <p id="averages"></p>
+
   </div>
 
-  <!-- javascript code -->
+  <!-- js script -->
   <script src="script.js"></script>
 </body>
 </html>

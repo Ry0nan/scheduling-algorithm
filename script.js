@@ -1,13 +1,14 @@
 function simulate() {
   const arrivalTimes = [
+    parseInt(document.getElementById('p0').value),
     parseInt(document.getElementById('p1').value),
     parseInt(document.getElementById('p2').value),
     parseInt(document.getElementById('p3').value),
     parseInt(document.getElementById('p4').value)
   ];
 
-  const burstTimes = [5, 3, 4, 2]; 
-  const n = 4;
+  const burstTimes = [6, 5, 3, 4, 2]; // updated to 5 processes with P0
+  const n = 5;
   const remaining = [...burstTimes];
   const completed = Array(n).fill(false);
   const completionTime = Array(n).fill(0);
@@ -30,7 +31,7 @@ function simulate() {
       timeline.push("-");
       time++;
     } else {
-      timeline.push("P" + (idx + 1));
+      timeline.push("P" + idx);
       remaining[idx]--;
       time++;
       if (remaining[idx] === 0) {
@@ -41,7 +42,7 @@ function simulate() {
     }
   }
 
-  // draw gantt chart
+  // Draw Gantt chart
   const timelineDiv = document.getElementById("timeline");
   timelineDiv.innerHTML = "";
   timeline.forEach(t => {
@@ -69,7 +70,7 @@ function simulate() {
   for (let i = 0; i < n; i++) {
     const row = document.createElement("tr");
     row.innerHTML = `
-      <td>P${i + 1}</td>
+      <td>P${i}</td>
       <td>${arrivalTimes[i]}</td>
       <td>${burstTimes[i]}</td>
       <td>${completionTime[i]}</td>
