@@ -7,7 +7,7 @@ function simulate() {
     parseInt(document.getElementById('p4').value)
   ];
 
-  const burstTimes = [6, 5, 3, 4, 2]; // updated to 5 processes with P0
+  const burstTimes = [6, 5, 3, 4, 2]; 
   const n = 5;
   const remaining = [...burstTimes];
   const completed = Array(n).fill(false);
@@ -42,7 +42,7 @@ function simulate() {
     }
   }
 
-  // Draw Gantt chart
+  // gantt chart
   const timelineDiv = document.getElementById("timeline");
   timelineDiv.innerHTML = "";
   timeline.forEach(t => {
@@ -80,7 +80,7 @@ function simulate() {
     tbody.appendChild(row);
   }
 
-  // Show averages
+  // show averages
   document.getElementById("averages").textContent = 
     `Average Turnaround Time: ${(totalTAT/n).toFixed(2)} | Average Waiting Time: ${(totalWT/n).toFixed(2)}`;
 }
