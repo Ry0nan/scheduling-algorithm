@@ -1,42 +1,85 @@
-document.getElementById("arrivalForm").addEventListener("submit", function (e) {
-  e.preventDefault();
+function simulate() {
+  const arrivalTimes = [
+    parseInt(document.getElementById('p1').value),
+    parseInt(document.getElementById('p2').value),
+    parseInt(document.getElementById('p3').value),
+    parseInt(document.getElementById('p4').value)
+  ];
 
-  const burstTimes = { P1: 6, P2: 8, P3: 7, P4: 3 };
-  const arrivalTimes = {
-    P1: parseInt(this.P1.value),
-    P2: parseInt(this.P2.value),
-    P3: parseInt(this.P3.value),
-    P4: parseInt(this.P4.value),
-  };
-
-  const processes = Object.keys(burstTimes).map(name => ({
-    name,
-    arrival: arrivalTimes[name],
-    burst: burstTimes[name],
-    remaining: burstTimes[name],
-    completed: false
-  }));
-
+  const burstTimes = [5, 3, 4, 2]; 
+  const n = 4;
+  const remaining = [...burstTimes];
+  const completed = Array(n).fill(false);
+  const completionTime = Array(n).fill(0);
+  const timeline = [];
   let time = 0;
-  const executionOrder = [];
+  let completedCount = 0;
 
-  while (processes.some(p => !p.completed)) {
-    const ready = processes.filter(p => p.arrival <= time && !p.completed);
-    if (ready.length > 0) {
-      const shortest = ready.reduce((a, b) => a.remaining < b.remaining ? a : b);
-      shortest.remaining--;
-      executionOrder.push(shortest.name);
-      if (shortest.remaining === 0) {
-        shortest.completed = true;
+  while (completedCount < n) {
+    let idx = -1;
+    let minRem = Infinity;
+
+    for (let i = 0; i < n; i++) {
+      if (!completed[i] && arrivalTimes[i] <= time && remaining[i] < minRem && remaining[i] > 0) {
+        minRem = remaining[i];
+        idx = i;
       }
-    } else {
-      executionOrder.push("-");
     }
-    time++;
+
+    if (idx === -1) {
+      timeline.push("-");
+      time++;
+    } else {
+      timeline.push("P" + (idx + 1));
+      remaining[idx]--;
+      time++;
+      if (remaining[idx] === 0) {
+        completed[idx] = true;
+        completionTime[idx] = time;
+        completedCount++;
+      }
+    }
   }
 
-  const output = document.getElementById("output");
-  output.innerHTML = `<h2>Execution Timeline:</h2><div class="gantt">` +
-    executionOrder.map(p => `<div class="gantt-box">${p}</div>`).join("") +
-    `</div>`;
-});
+  // draw gantt chart
+  const timelineDiv = document.getElementById("timeline");
+  timelineDiv.innerHTML = "";
+  timeline.forEach(t => {
+    const box = document.createElement("div");
+    box.className = "gantt-box";
+    box.textContent = t;
+    timelineDiv.appendChild(box);
+  });
+
+  // calculate metrics
+  const turnaroundTime = [];
+  const waitingTime = [];
+  let totalTAT = 0, totalWT = 0;
+
+  for (let i = 0; i < n; i++) {
+    turnaroundTime[i] = completionTime[i] - arrivalTimes[i];
+    waitingTime[i] = turnaroundTime[i] - burstTimes[i];
+    totalTAT += turnaroundTime[i];
+    totalWT += waitingTime[i];
+  }
+
+  // fill table
+  const tbody = document.querySelector("#resultTable tbody");
+  tbody.innerHTML = "";
+  for (let i = 0; i < n; i++) {
+    const row = document.createElement("tr");
+    row.innerHTML = `
+      <td>P${i + 1}</td>
+      <td>${arrivalTimes[i]}</td>
+      <td>${burstTimes[i]}</td>
+      <td>${completionTime[i]}</td>
+      <td>${turnaroundTime[i]}</td>
+      <td>${waitingTime[i]}</td>
+    `;
+    tbody.appendChild(row);
+  }
+
+  // Show averages
+  document.getElementById("averages").textContent = 
+    `Average Turnaround Time: ${(totalTAT/n).toFixed(2)} | Average Waiting Time: ${(totalWT/n).toFixed(2)}`;
+}
